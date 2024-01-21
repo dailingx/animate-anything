@@ -113,8 +113,8 @@ lora_rank: 16
 train_data:
 
   # The width and height in which you want your training data to be resized to.
-  width:  1024
-  height: 576
+  width:  512
+  height: 512
 
   # This will find the closest aspect ratio to your input width and height. 
   # For example, 512x512 width and height with a video of resolution 1280x720 will be resized to 512x256
@@ -133,7 +133,7 @@ train_data:
   frame_step: 1
 
   # The number of frames to sample. The higher this number, the higher the VRAM (acts similar to batch size).
-  n_sample_frames: 7
+  n_sample_frames: 14
   
   # 'single_video'
   single_video_path: "/data/datasets/animal_kingdom/video_grounding/dataset/AADJBFXO.mp4"
@@ -146,15 +146,16 @@ train_data:
   
   # 'folder'
   #path: "/data2/webvid/data/videos/004151_004200"
-  path: "/data/datasets/msvd/videos_mp4"
+  path: "/root/sspaas-fs/train_data/resize_1024_576"
 
   # 'json'
-  json_path: '/webvid/animation1.json'
+  json_path: '/root/sspaas-fs/train_data/resize_1024_576/videos_blip2_config.json'
 
   # 'image'
   image_dir: '/vlp/datasets/images/coco'
   image_json: '/vlp/datasets/images/coco/coco_karpathy_train.json'
 
+  # 没使用
   video_dir: '/root/sspaas-fs/train_data/resize_1024_576'
   video_json: '/root/sspaas-fs/train_data/resize_1024_576/40K.json'
   # The prompt for all image files. Leave blank to use caption files (.txt) 
