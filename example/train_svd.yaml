@@ -166,9 +166,9 @@ train_data:
 validation_data:
 
   # A custom prompt that is different from your training dataset. 
-  prompt: "a girl moves body"
+  prompt: "a cartoon chicken is moving"
 
-  prompt_image: "output/example/girl4.jpg"
+  prompt_image: "/root/sspaas-fs/validation_image/0014.jpg"
 
   # Whether or not to sample preview during training (Requires more VRAM).
   sample_preview: True
@@ -177,8 +177,8 @@ validation_data:
   num_frames: 14
 
   # Height and width of validation sample.
-  width: 1024
-  height: 576
+  width: 512
+  height: 512
 
   # Number of inference steps when generating the video.
   num_inference_steps: 25
