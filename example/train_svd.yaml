@@ -133,7 +133,7 @@ train_data:
   frame_step: 1
 
   # The number of frames to sample. The higher this number, the higher the VRAM (acts similar to batch size).
-  n_sample_frames: 14
+  n_sample_frames: 13
 
   # 'single_video'
   single_video_path: "/data/datasets/animal_kingdom/video_grounding/dataset/AADJBFXO.mp4"
@@ -173,7 +173,7 @@ validation_data:
   sample_preview: True
 
   # The number of frames to sample during validation.
-  num_frames: 14
+  num_frames: 13
 
   # Height and width of validation sample.
   width: 512
