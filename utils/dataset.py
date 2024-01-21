@@ -89,10 +89,10 @@ def get_text_prompt(
         return fallback_prompt
 
     
-def get_frame_batch(max_frames, sample_fps, vr, transform):
+def get_frame_batch(max_frames, sample_fps, vr, transform, sample_start_idx):
     native_fps = vr.get_avg_fps()
     max_range = len(vr)
-    frame_number = sorted((0, vr.sample_start_idx, max_range))[1]
+    frame_number = sorted((0, sample_start_idx, max_range))[1]
     frame_step = max(1, round(native_fps / sample_fps))
     frame_range = range(0, max_range, frame_step)
     if len(frame_range) < max_frames:
@@ -221,7 +221,7 @@ class VideoBLIPDataset(Dataset):
             return torch.load(cache_path, map_location='cpu')
 
         vr = decord.VideoReader(clip_path)
-        video = get_frame_batch(self.n_sample_frames, self.fps, vr, self.transform)
+        video = get_frame_batch(self.n_sample_frames, self.fps, vr, self.transform, self.sample_start_idx)
         prompt_ids = get_prompt_ids(prompt, self.tokenizer)
         example = {
             "pixel_values": normalize_input(video),
@@ -601,7 +601,8 @@ class VideoJsonDataset(Dataset):
             if self.fallback_prompt == "<no_text>":
                 prompt = ""
             vr = decord.VideoReader(video_path)
-            video = get_frame_batch(self.n_sample_frames, self.fps, vr, self.transform)
+            # todo 不严谨
+            video = get_frame_batch(self.n_sample_frames, self.fps, vr, self.transform, 0)
         except Exception as err:
             print("read video error", err, video_path)
             return self.__getitem__(index+1)
