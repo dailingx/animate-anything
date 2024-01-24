@@ -97,7 +97,7 @@ def get_frame_batch(max_frames, sample_fps, vr, transform, sample_start_idx):
     frame_range = range(0, max_range, frame_step)
     print(f'get_frame_batch frame_number:{frame_number}, len-frame_range:{len(frame_range)}, max_frames:{max_frames}, frame_range:{frame_range}')
     if len(frame_range) < max_frames:
-        frame_range =  np.linspace(frame_number, max_range-1, max_frames).astype(int)
+        frame_range =  np.linspace(0, max_range-1, max_frames).astype(int)
     #start = random.randint(0, len(frame_range) - max_frames)
     start = len(frame_range) - max_frames
     frame_range_indices = list(frame_range)[start:start+max_frames]
