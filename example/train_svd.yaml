@@ -216,7 +216,7 @@ extra_text_encoder_params: null
 # How many batches to train. Not to be confused with video frames.
 train_batch_size: 1
 # Maximum number of train steps. Model is saved after training.
-max_train_steps: 10000
+max_train_steps: 30000
 
 # Saves a model every nth step.
 checkpointing_steps: 2500
