@@ -134,7 +134,6 @@ class VideoBLIPDataset(Dataset):
             vid_data_key: str = "video_path",
             preprocessed: bool = False,
             use_bucketing: bool = False,
-            cache_latents: bool = False,
             motion_threshold = 50,
             **kwargs
     ):
@@ -145,7 +144,6 @@ class VideoBLIPDataset(Dataset):
         
         self.vid_data_key = vid_data_key
         self.train_data = self.load_from_json(json_path, json_data)
-        self.cache_latents = cache_latents
         self.motion_threshold = motion_threshold
         self.width = width
         self.height = height
@@ -217,9 +215,6 @@ class VideoBLIPDataset(Dataset):
             clip_path = vid_data[self.vid_data_key]
             # Get the frame of the current index.
             self.sample_start_idx = vid_data['frame_index']
-        cache_path = os.path.splitext(clip_path)[0] + '.pt'
-        if self.cache_latents and os.path.exists(cache_path):
-            return torch.load(cache_path, map_location='cpu')
 
         vr = decord.VideoReader(clip_path)
         video = get_frame_batch(self.n_sample_frames, self.fps, vr, self.transform, self.sample_start_idx)
@@ -229,7 +224,6 @@ class VideoBLIPDataset(Dataset):
             "prompt_ids": prompt_ids,
             "text_prompt": prompt,
             'dataset': self.__getname__(),
-            'cache_path': cache_path,
         }
         mask = get_moved_area_mask(video.permute([0,2,3,1]).numpy())
         example['mask'] = mask
@@ -550,7 +544,6 @@ class VideoJsonDataset(Dataset):
         video_json: str = "",
         fallback_prompt: str = "",
         use_bucketing: bool = False,
-        cache_latents = False,
         motion_threshold = 50,
         **kwargs
     ):
@@ -566,7 +559,6 @@ class VideoJsonDataset(Dataset):
 
         self.n_sample_frames = n_sample_frames
         self.fps = fps
-        self.cache_latents = cache_latents
         self.motion_threshold = motion_threshold
         self.transform = T.Compose([
             #T.RandomResizedCrop(size=(height, width), scale=(0.8, 1.0), ratio=(width/height, width/height), antialias=False),
@@ -594,9 +586,6 @@ class VideoJsonDataset(Dataset):
         try:
             item = self.video_files[index]
             video_path = os.path.join(self.video_dir, item['video'])
-            cache_path = os.path.splitext(video_path)[0] + '.pt'
-            if self.cache_latents and os.path.exists(cache_path):
-                return torch.load(cache_path, map_location='cpu')
 
             prompt = item['caption']
             if self.fallback_prompt == "<no_text>":
@@ -613,10 +602,9 @@ class VideoJsonDataset(Dataset):
             "pixel_values": normalize_input(video), 
             "prompt_ids": prompt_ids, 
             "text_prompt": prompt, 
-            'cache_path': cache_path,
             'dataset': self.__getname__()
         }
-        mask = get_moved_area_mask(video.permute([0,2,3,1]).numpy())
+        example['mask'] = get_moved_area_mask(video.permute([0,2,3,1]).numpy())
         example['motion'] = calculate_motion_score(video.permute([0,2,3,1]).numpy())
         if example['motion'] < self.motion_threshold:
             return self.__getitem__(random.randint(0, len(self)-1))
@@ -637,3 +625,37 @@ class CachedDataset(Dataset):
     def __getitem__(self, index):
         cached_latent = torch.load(self.cached_data_list[index], map_location='cuda:0')
         return cached_latent
+
+def get_train_dataset(dataset_types, train_data, tokenizer):
+    train_datasets = []
+    dataset_cls = [VideoJsonDataset, SingleVideoDataset, ImageDataset, VideoFolderDataset, VideoBLIPDataset]
+    dataset_map = {d.__getname__(): d for d in dataset_cls}
+
+    # Loop through all available datasets, get the name, then add to list of data to process.
+    for dataset in dataset_types:
+        if dataset in dataset_map:
+            train_datasets.append(dataset_map[dataset](**train_data, tokenizer=tokenizer))
+        else:
+            raise ValueError(f"Dataset type not found: {dataset} not in {dataset_map.keys()}")
+    return train_datasets
+
+def extend_datasets(datasets, dataset_items, extend=False):
+    biggest_data_len = max(x.__len__() for x in datasets)
+    extended = []
+    for dataset in datasets:
+        if dataset.__len__() == 0:
+            del dataset
+            continue
+        if dataset.__len__() < biggest_data_len:
+            for item in dataset_items:
+                if extend and item not in extended and hasattr(dataset, item):
+                    print(f"Extending {item}")
+
+                    value = getattr(dataset, item)
+                    value *= biggest_data_len
+                    value = value[:biggest_data_len]
+
+                    setattr(dataset, item, value)
+
+                    print(f"New {item} dataset length: {dataset.__len__()}")
+                    extended.append(item)
