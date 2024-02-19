@@ -146,10 +146,10 @@ train_data:
   
   # 'folder'
   #path: "/data2/webvid/data/videos/004151_004200"
-  path: "/root/Video-BLIP2-Preprocessor/videos/resize_512_512"
+  path: "/root/sspaas-fs/train_data/select_resize_512_512"
 
   # 'json'
-  json_path: '/root/Video-BLIP2-Preprocessor/videos/resize_512_512/videos_blip2_config.json'
+  json_path: '/root/sspaas-fs/train_data/select_resize_512_512/videos_blip2_config.json'
 
   # 'image'
   image_dir: '/vlp/datasets/images/coco'
@@ -166,9 +166,9 @@ train_data:
 validation_data:
 
   # A custom prompt that is different from your training dataset. 
-  prompt: "a cartoon chicken is moving"
+  prompt: "the soup is boiling and steaming"
 
-  prompt_image: "/root/sspaas-fs/validation_image/0014.jpg"
+  prompt_image: "/root/sspaas-fs/validation_image/0001.png"
 
   # Whether or not to sample preview during training (Requires more VRAM).
   sample_preview: True
