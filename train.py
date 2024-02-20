@@ -43,6 +43,7 @@ from transformers.models.clip.modeling_clip import CLIPEncoder
 from utils.dataset import get_train_dataset, extend_datasets
 from einops import rearrange, repeat
 import imageio
+import subprocess
 
 
 from models.unet_3d_condition_mask import UNet3DConditionModel
@@ -282,7 +283,7 @@ def save_pipe(
         save_path = os.path.join(output_dir, f"checkpoint-{global_step}")
         os.makedirs(save_path, exist_ok=True)
     else:
-        save_path = output_dir
+        save_path = os.path.join(output_dir, "final")
     # Copy the model without creating a reference to it. This allows keeping the state of our lora training if enabled.
     unet_out = copy.deepcopy(unet)
     text_encoder_out = copy.deepcopy(text_encoder)
@@ -307,6 +308,12 @@ def save_pipe(
     torch.cuda.empty_cache()
     gc.collect()
 
+    # upload model file
+    logger.info("begin to upload model file.")
+    upload_command = f'/usr/bin/ossutil64 cp -r {output_dir} oss://mmc-aigc-creative/i2v_train/train_result/latest/'
+    upload_command_result = subprocess.run(upload_command, shell=True, stdout=subprocess.PIPE,
+                                             stderr=subprocess.PIPE, text=True)
+    logger.info("upload model file success.")
 
 def replace_prompt(prompt, token, wlist):
     for w in wlist:
