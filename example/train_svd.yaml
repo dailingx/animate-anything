@@ -149,7 +149,7 @@ train_data:
   path: "/root/sspaas-fs/train_data/test_512"
 
   # 'json'
-  json_path: '/root/sspaas-fs/train_data/test_512/videos_blip2_config.json'
+  json_path: '/root/sspaas-fs/train_data/test_512/videos_blip2_config_size512_50.json'
 
   # 'image'
   image_dir: '/vlp/datasets/images/coco'
