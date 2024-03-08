@@ -146,10 +146,10 @@ train_data:
 
   # 'folder'
   #path: "/data2/webvid/data/videos/004151_004200"
-  path: "/root/Video-BLIP2-Preprocessor/videos/test"
+  path: "/root/sspaas-fs/train_data/test"
 
   # 'json'
-  json_path: '/root/Video-BLIP2-Preprocessor/videos/test/videos_blip2_config.json'
+  json_path: '/root/sspaas-fs/train_data/test/videos_blip2_config.json'
 
   # 'image'
   image_dir: '/vlp/datasets/images/coco'
