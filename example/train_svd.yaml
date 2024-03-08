@@ -113,8 +113,8 @@ lora_rank: 16
 train_data:
 
   # The width and height in which you want your training data to be resized to.
-  width:  512
-  height: 512
+  width:  320
+  height: 320
 
   # This will find the closest aspect ratio to your input width and height. 
   # For example, 512x512 width and height with a video of resolution 1280x720 will be resized to 512x256
@@ -146,10 +146,11 @@ train_data:
   
   # 'folder'
   #path: "/data2/webvid/data/videos/004151_004200"
-  path: "/root/sspaas-fs/train_data/test_512"
+  path: "/root/sspaas-fs/train_data/test"
 
   # 'json'
-  json_path: '/root/sspaas-fs/train_data/test_512/videos_blip2_config_size512_50.json'
+  json_path: '/root/sspaas-fs/train_data/test/videos_blip2_config_50.json'
+#  json_path: '/root/sspaas-fs/train_data/test_512/videos_blip2_config_size512_50.json'
 
   # 'image'
   image_dir: '/vlp/datasets/images/coco'
