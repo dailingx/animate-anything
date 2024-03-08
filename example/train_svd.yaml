@@ -146,7 +146,7 @@ train_data:
 
   # 'folder'
   #path: "/data2/webvid/data/videos/004151_004200"
-  path: "/root/sspaas-fs/train_data/select_resize_512_512
+  path: "/root/sspaas-fs/train_data/select_resize_512_512"
 
   # 'json'
   json_path: '/root/sspaas-fs/train_data/select_resize_512_512/videos_blip2_config.json'
