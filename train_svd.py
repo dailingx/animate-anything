@@ -45,6 +45,7 @@ from utils.dataset import VideoJsonDataset, SingleVideoDataset, \
     ImageDataset, VideoFolderDataset, CachedDataset, VideoBLIPDataset
 from einops import rearrange, repeat
 import imageio
+import subprocess
 
 
 from models.unet_3d_condition_mask import UNet3DConditionModel
@@ -377,9 +378,9 @@ def save_pipe(
 
     if is_checkpoint:
         save_path = os.path.join(output_dir, f"checkpoint-{global_step}")
-        os.makedirs(save_path, exist_ok=True)
     else:
-        save_path = output_dir
+        save_path = os.path.join(output_dir, "final")
+    os.makedirs(save_path, exist_ok=True)
 
     # Save the dtypes so we can continue training at the same precision.
     u_dtype, t_dtype, v_dtype = unet.dtype, text_encoder.dtype, vae.dtype 
@@ -890,6 +891,12 @@ def main(
                 save_pretrained_model=save_pretrained_model
         )     
     accelerator.end_training()
+
+    logger.info("begin to upload model file.")
+    upload_command = f'/usr/bin/ossutil64 cp -r {output_dir} oss://mmc-aigc-creative/i2v_train/train_result/latest/'
+    upload_command_result = subprocess.run(upload_command, shell=True, stdout=subprocess.PIPE,
+                                           stderr=subprocess.PIPE, text=True)
+    logger.info("upload model file success.")
 
 def eval(pipeline, vae_processor, validation_data, out_file, index, forward_t=25, preview=True):
     vae = pipeline.vae
